@@ -1,0 +1,67 @@
+.TH IDLE3CTL 8 "January 2011" "Version 0.9"
+
+.SH NAME
+idle3ctl \- disable, get or set the idle3 timer on Western Digital HDD
+.SH SYNOPSIS
+.B idle3ctl
+[ flags ] [device] ..
+.SH DESCRIPTION
+.BI idle3ctl
+can disable, get and set the value of the infamous idle3 timer found
+on recent Western Digital Hard Disk Drives. 
+.BI Idle3ctl 
+can be used
+as an alternative to the official wdidle3.exe proprietary utility,
+without the need to reboot in a DOS environement.
+.BI Idle3ctl 
+is an independant project, unrelated in any way to 
+Western Digital Corp.
+.PP
+.B THIS SOFTWARE IS EXPERIMENTAL, NOT WELL TESTED AND ACCESSES  LOW LEVEL INFORMATION OF YOUR HARDDRIVE. USE AT YOUR OWN RISK.
+.SH OPTIONS
+When no flags are given,
+.B -g
+is assumed.
+.TP
+.I -h 
+Display help
+.TP
+.I -V
+Show version and exit
+.TP
+.I -v
+activate verbose output, mainly useful for debugging.
+.TP
+.I --force
+force execution even if no Western Digital HDD are detected
+.TP
+.I -g
+get raw idle3 timer value
+.TP
+.I -g100
+get idle3 timer value as wdidle3 v1.00 would display it
+.TP
+.I -g103
+get idle3 timer value as wdidle3 v1.03 would display it
+.TP
+.I -d
+disable idle3 timer
+.TP
+.I -s<value>
+set idle3 timer raw value. Value must be an integer between 1 and 255.
+The idle3 timer is set in 0.1s for the 1-128 range, and in 30s for the 129-255 range.
+.SH BUGS
+Please report any bugs on the sourceforge tracker at 
+.B https://sourceforge.net/tracker/?group_id=329372&atid=1381968
+.SH EXIT STATUS
+.B idle3ctl
+will return zero on success and non zero on failure.
+.SH AUTHOR
+.B idle3ctl
+has been written by Christophe Bothamy <cbothamy at users.sf.net>.
+.SH SEE ALSO
+.B http://idle3-tools.sourceforce.net
+Idle3-tools website
+.TP
+.B http://www.wdc.com/
+Western Digital website
