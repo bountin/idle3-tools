@@ -230,11 +230,6 @@ int VSC_set_timer(unsigned char timer)
 
   memset(buffer,0,sizeof(buffer));
   buffer[0]=timer;
-  buffer[1]=0x2c;
-  buffer[2]=0x4c;
-  buffer[3]=0x00;
-  buffer[4]=0xfe;
-  buffer[5]=0x00;
 
   if(sg16(fd, SG_WRITE, SG_PIO, &tf, buffer, 512, 5)) {
     err = errno;
