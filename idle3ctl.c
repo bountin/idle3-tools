@@ -39,7 +39,7 @@ char *device;
 char *progname;
 int fd=0;
 
-#define VERSION "0.9"
+#define VERSION "0.9a"
 
 #define VSC_KEY_WRITE 0x02
 #define VSC_KEY_READ 0x01
@@ -269,6 +269,7 @@ void show_usage(void)
   printf(" -g : get raw idle3 timer value\n");
   printf(" -g100 : get idle3 timer value as wdidle3 v1.00 value\n");
   printf(" -g103 : get idle3 timer value as wdidle3 v1.03 value\n");
+  printf(" -g105 : get idle3 timer value as wdidle3 v1.05 value\n");
   printf(" -d : disable idle3 timer\n");
   printf(" -s<value> : set idle3 timer raw value\n");
 }
@@ -301,6 +302,7 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-g")==0) action=1;
     else if (strcmp(argv[i],"-g100")==0) action=2;
     else if (strcmp(argv[i],"-g103")==0) action=3;
+    else if (strcmp(argv[i],"-g105")==0) action=3;
     else if (strcmp(argv[i],"-d")==0) {
       action=0;
       timer=0;
