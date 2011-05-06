@@ -264,7 +264,7 @@ void show_usage(void)
   printf("Options: \n");
   printf(" -h : displat help\n");
   printf(" -V : show version and exit immediately\n");
-  printf(" -v : version\n");
+  printf(" -v : verbose output\n");
   printf(" --force : force even if no Western Digital HDD are detected\n");
   printf(" -g : get raw idle3 timer value\n");
   printf(" -g100 : get idle3 timer value as wdidle3 v1.00 value\n");
