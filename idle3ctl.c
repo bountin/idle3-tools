@@ -39,7 +39,7 @@ char *device;
 char *progname;
 int fd=0;
 
-#define VERSION "0.9a"
+#define VERSION "0.9.1"
 
 #define VSC_KEY_WRITE 0x02
 #define VSC_KEY_READ 0x01
@@ -348,6 +348,9 @@ int main(int argc, char **argv)
 
         if (timer==0) printf("Idle3 timer disabled\n");
         else printf("Idle3 timer set to %d (0x%02x)\n", timer, timer);
+
+	printf("Please power cycle off and on your drive for the new "
+               "setting to be taken into account.\n");
       }
       else if (action>=1) {
         if (VSC_send_read_key()!=0) exit(1);
