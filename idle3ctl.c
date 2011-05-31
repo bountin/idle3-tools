@@ -357,7 +357,7 @@ int main(int argc, char **argv)
         if (VSC_get_timer(&timer)!=0) exit(1);
 
         if (timer==0) {
-          printf("Idle3 timer is disabled");
+          printf("Idle3 timer is disabled\n");
         }
         else switch (action) {
           case 1:
