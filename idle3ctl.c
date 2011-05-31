@@ -349,8 +349,8 @@ int main(int argc, char **argv)
         if (timer==0) printf("Idle3 timer disabled\n");
         else printf("Idle3 timer set to %d (0x%02x)\n", timer, timer);
 
-	printf("Please power cycle off and on your drive for the new "
-               "setting to be taken into account. A reboot is not enough!\n");
+	printf("Please power cycle your drive off and on for the new "
+               "setting to be taken into account. A reboot will not be enough!\n");
       }
       else if (action>=1) {
         if (VSC_send_read_key()!=0) exit(1);
