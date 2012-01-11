@@ -39,7 +39,7 @@ char *device;
 char *progname;
 int fd=0;
 
-#define VERSION "0.9.1"
+#define VERSION "0.9.2"
 
 #define VSC_KEY_WRITE 0x02
 #define VSC_KEY_READ 0x01
@@ -262,7 +262,7 @@ void show_usage(void)
   printf("\n");
   printf("Usage: %s [options] device\n", progname);
   printf("Options: \n");
-  printf(" -h : displat help\n");
+  printf(" -h : display help\n");
   printf(" -V : show version and exit immediately\n");
   printf(" -v : verbose output\n");
   printf(" --force : force even if no Western Digital HDD are detected\n");

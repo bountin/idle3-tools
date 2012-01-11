@@ -10,8 +10,8 @@ sbindir = $(exec_prefix)sbin
 mandir = $(manprefix)/share/man
 oldmandir = $(manprefix)/man
 
-CC ?= gcc
-STRIP ?= strip
+CC = gcc
+STRIP = strip
 
 CFLAGS := -g -O2 -W -Wall -Wbad-function-cast -Wcast-align -Wpointer-arith -Wcast-qual -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -fkeep-inline-functions -Wwrite-strings -Waggregate-return -Wnested-externs -Wtrigraphs $(CFLAGS)
 
