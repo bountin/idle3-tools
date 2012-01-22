@@ -43,7 +43,7 @@ int fd=0;
 #error "The SG_IO ioctl is mandatory for idle3ctl."
 #endif
 
-#define VERSION "0.9.2"
+#define VERSION "0.9.3"
 
 #define VSC_KEY_WRITE 0x02
 #define VSC_KEY_READ 0x01
