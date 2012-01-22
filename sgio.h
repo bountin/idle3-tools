@@ -2,6 +2,9 @@
 
 #include <linux/types.h>
 
+#include <scsi/scsi.h>
+#include <scsi/sg.h>
+
 enum {
 	ATA_OP_DSM			= 0x06, // Data Set Management (TRIM)
 	ATA_OP_READ_PIO			= 0x20,
