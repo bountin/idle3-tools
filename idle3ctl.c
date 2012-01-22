@@ -29,7 +29,7 @@
 #include <errno.h>
 
 #include "sgio.h"
-int prefer_ata12 = 1;
+int prefer_ata12 = 0;
 int verbose = 0;
 
 int vscenabled = 0;
@@ -279,15 +279,13 @@ void show_usage(void)
   printf(" -g105 : get idle3 timer value as wdidle3 v1.05 value\n");
   printf(" -d : disable idle3 timer\n");
   printf(" -s<value> : set idle3 timer raw value\n");
-  printf(" -tsat12 : access USB drive via SAT (12bytes commands)\n");
-  printf(" -tsat16 : access USB drive via SAT (16bytes commands)\n");
+  printf(" -cdb12 : use 12 bytes CDB (default is 16)\n");
 }
 
 int main(int argc, char **argv)
 {
   int i;
   int action = 1;       /* 0: write, 1: read raw, 2: read as v1.00, 3: read as v1.03 */
-  int use_sat=0;	/* 0: no, 12: sat12, 16: sat16 */
   unsigned char timer;
   int display_usage = 1;
 
@@ -313,9 +311,7 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-g100")==0) action=2;
     else if (strcmp(argv[i],"-g103")==0) action=3;
     else if (strcmp(argv[i],"-g105")==0) action=3;
-    else if (strcmp(argv[i],"-tsat12")==0) use_sat=12;
-    else if (strcmp(argv[i],"-tsat")==0) use_sat=16;
-    else if (strcmp(argv[i],"-tsat16")==0) use_sat=16;
+    else if (strcmp(argv[i],"-cdb12")==0) prefer_ata12=1;
     else if (strcmp(argv[i],"-d")==0) {
       action=0;
       timer=0;
