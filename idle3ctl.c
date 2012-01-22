@@ -258,26 +258,29 @@ void show_version(void)
 void show_usage(void)
 {
   printf("%s v%s - Read, Set or disable the idle3 timer of Western Digital drives\n", progname, VERSION);
-  printf("Copyright (C) 2011  Christophe Bothamy\n");
+  printf("Copyright (C) 2011-2012  Christophe Bothamy\n");
   printf("\n");
   printf("Usage: %s [options] device\n", progname);
   printf("Options: \n");
   printf(" -h : display help\n");
   printf(" -V : show version and exit immediately\n");
   printf(" -v : verbose output\n");
-  printf(" --force : force even if no Western Digital HDD are detected\n");
+  printf(" --force : force even if no Western Digital drives are detected\n");
   printf(" -g : get raw idle3 timer value\n");
   printf(" -g100 : get idle3 timer value as wdidle3 v1.00 value\n");
   printf(" -g103 : get idle3 timer value as wdidle3 v1.03 value\n");
   printf(" -g105 : get idle3 timer value as wdidle3 v1.05 value\n");
   printf(" -d : disable idle3 timer\n");
   printf(" -s<value> : set idle3 timer raw value\n");
+  printf(" -tsat12 : access USB drive via SAT (12bytes commands)\n");
+  printf(" -tsat16 : access USB drive via SAT (16bytes commands)\n");
 }
 
 int main(int argc, char **argv)
 {
   int i;
   int action = 1;       /* 0: write, 1: read raw, 2: read as v1.00, 3: read as v1.03 */
+  int use_sat=0;	/* 0: no, 12: sat12, 16: sat16 */
   unsigned char timer;
   int display_usage = 1;
 
@@ -303,6 +306,9 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-g100")==0) action=2;
     else if (strcmp(argv[i],"-g103")==0) action=3;
     else if (strcmp(argv[i],"-g105")==0) action=3;
+    else if (strcmp(argv[i],"-sat12")==0) use_sat=12;
+    else if (strcmp(argv[i],"-sat")==0) use_sat=16;
+    else if (strcmp(argv[i],"-sat16")==0) use_sat=16;
     else if (strcmp(argv[i],"-d")==0) {
       action=0;
       timer=0;
