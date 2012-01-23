@@ -39,40 +39,50 @@ char *device;
 char *progname;
 int fd=0;
 
-#define VERSION "0.9.2"
+#ifndef SG_IO
+#error "The SG_IO ioctl is mandatory for idle3ctl."
+#endif
+
+#define VERSION "0.9.3"
 
 #define VSC_KEY_WRITE 0x02
 #define VSC_KEY_READ 0x01
 
 int check_WDC_drive()
 {
-  static __u8 atabuffer[4+512];
-  int i;
 
   if (verbose) {
     printf("Checking if Drive is a Western Digital Drive\n");
   }
 
-  memset(atabuffer, 0, sizeof(atabuffer));
-  atabuffer[0] = ATA_OP_IDENTIFY;
-  atabuffer[3] = 1;
-  if (do_drive_cmd(fd, atabuffer)) {
-    perror(" HDIO_DRIVE_CMD(identify) failed");
-    return errno;
+  int i;
+  int err = 0;
+  static __u8 buffer[512];
+  struct ata_tf tf;
+
+  tf_init(&tf, ATA_OP_IDENTIFY, 0, 0);
+  tf.lob.nsect = 0x01;
+
+  memset(buffer, 0, sizeof(buffer));
+
+  if(sg16(fd, SG_READ, SG_PIO, &tf, buffer, 512, 5)) {
+    err = errno;
+    perror("sg16(ATA_OP_IDENTIFY) failed");
+    return err;
   } 
 
   if (!force) {
     /* Check for a Western Digital Drive  3 first characters : WDC*/
-    if ( (atabuffer[4+(27*2)+1] != 'W')
-      || (atabuffer[4+(27*2)] != 'D')
-      || (atabuffer[4+(28*2)+1] != 'C')) {
+    if ( (buffer[(27*2)+1] != 'W')
+      || (buffer[(27*2)] != 'D')
+      || (buffer[(28*2)+1] != 'C')) {
       fprintf(stderr, "The drive %s does not seem to be a Western Digital Drive ",device);
       fprintf(stderr, "but a ");
       for (i=27; i<47; i++) {
-        if(atabuffer[4+(i*2)+1]==0)break;
-        putchar(atabuffer[4+(i*2)+1]);
-        if(atabuffer[4+(i*2)+0]==0)break;
-        putchar(atabuffer[4+(i*2)+0]);
+        if(buffer[(i*2)+1]==0)break;
+        putchar(buffer[(i*2)+1]);
+        if(buffer[(i*2)+0]==0)break;
+        putchar(buffer[(i*2)+0]);
       }
       printf("\n");
 
@@ -93,11 +103,11 @@ int VSC_enable()
 
   int err = 0;
   struct ata_tf tf;
+
   tf_init(&tf, ATA_OP_VENDOR_SPECIFIC, 0, 0);
   tf.lob.feat = 0x45;
   tf.lob.lbam = 0x44;
   tf.lob.lbah = 0x57;
-  tf.dev = 0xa0;
 
   if(sg16(fd, SG_WRITE, SG_PIO, &tf, NULL, 0, 5)) {
     err = errno;
@@ -117,11 +127,11 @@ int VSC_disable()
 
   int err = 0;
   struct ata_tf tf;
+
   tf_init(&tf, ATA_OP_VENDOR_SPECIFIC, 0, 0);
   tf.lob.feat = 0x44;
   tf.lob.lbam = 0x44;
   tf.lob.lbah = 0x57;
-  tf.dev = 0xa0;
 
   if(sg16(fd, SG_WRITE, SG_PIO, &tf, NULL, 0, 5)) {
     err = errno;
@@ -136,7 +146,7 @@ int VSC_disable()
 int VSC_send_key(char rw)
 {
   int err = 0;
-  char buffer[512];
+  __u8 buffer[512];
   struct ata_tf tf;
 
   tf_init(&tf, ATA_OP_SMART, 0, 0);
@@ -145,7 +155,6 @@ int VSC_send_key(char rw)
   tf.lob.lbal = 0xbe;
   tf.lob.lbam = 0x4f;
   tf.lob.lbah = 0xc2;
-  tf.dev = 0xa0;
 
   memset(buffer,0,sizeof(buffer));
   buffer[0]=0x2a;
@@ -186,7 +195,7 @@ int VSC_get_timer(unsigned char *timer)
   }
 
   int err = 0;
-  char buffer[512];
+  __u8 buffer[512];
   struct ata_tf tf;
 
   tf_init(&tf, ATA_OP_SMART, 0, 0);
@@ -195,7 +204,6 @@ int VSC_get_timer(unsigned char *timer)
   tf.lob.lbal = 0xbf;
   tf.lob.lbam = 0x4f;
   tf.lob.lbah = 0xc2;
-  tf.dev = 0xa0;
 
   memset(buffer,0,sizeof(buffer));
 
@@ -226,7 +234,6 @@ int VSC_set_timer(unsigned char timer)
   tf.lob.lbal = 0xbf;
   tf.lob.lbam = 0x4f;
   tf.lob.lbah = 0xc2;
-  tf.dev = 0xa0;
 
   memset(buffer,0,sizeof(buffer));
   buffer[0]=timer;
@@ -258,20 +265,21 @@ void show_version(void)
 void show_usage(void)
 {
   printf("%s v%s - Read, Set or disable the idle3 timer of Western Digital drives\n", progname, VERSION);
-  printf("Copyright (C) 2011  Christophe Bothamy\n");
+  printf("Copyright (C) 2011-2012  Christophe Bothamy\n");
   printf("\n");
   printf("Usage: %s [options] device\n", progname);
   printf("Options: \n");
   printf(" -h : display help\n");
   printf(" -V : show version and exit immediately\n");
   printf(" -v : verbose output\n");
-  printf(" --force : force even if no Western Digital HDD are detected\n");
+  printf(" --force : force even if no Western Digital drives are detected\n");
   printf(" -g : get raw idle3 timer value\n");
   printf(" -g100 : get idle3 timer value as wdidle3 v1.00 value\n");
   printf(" -g103 : get idle3 timer value as wdidle3 v1.03 value\n");
   printf(" -g105 : get idle3 timer value as wdidle3 v1.05 value\n");
   printf(" -d : disable idle3 timer\n");
   printf(" -s<value> : set idle3 timer raw value\n");
+  printf(" --cdb12 : use 12-bytes cdbs (default is 16-bytes cdbs)\n");
 }
 
 int main(int argc, char **argv)
@@ -303,6 +311,7 @@ int main(int argc, char **argv)
     else if (strcmp(argv[i],"-g100")==0) action=2;
     else if (strcmp(argv[i],"-g103")==0) action=3;
     else if (strcmp(argv[i],"-g105")==0) action=3;
+    else if (strcmp(argv[i],"--cdb12")==0) prefer_ata12=1;
     else if (strcmp(argv[i],"-d")==0) {
       action=0;
       timer=0;

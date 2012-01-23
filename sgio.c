@@ -9,9 +9,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <scsi/scsi.h>
-#include <scsi/sg.h>
-
 #include "sgio.h"
 
 #include <linux/hdreg.h>
